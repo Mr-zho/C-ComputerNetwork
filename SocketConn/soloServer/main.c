@@ -6,8 +6,11 @@
 #include <netinet/in.h>
 #include <string.h>
 #include <unistd.h>
+#include <ctype.h>
 
 #define SERVER_PORT 8080
+#define  BUFFER_SIZE 64
+
 
 int main()
 {
@@ -66,11 +69,42 @@ int main()
     }
     printf("connfd is %d\n", connfd);
 
-    /* */
-    char buffer[32] = { 0 };
-    strcpy(buffer, "偶像");
-    write(connfd, buffer, sizeof(buffer) - 1);
+    /* 服务器接收客户端的信息, 并做出反馈 */
+    /* 服务器365天 24小时 */
+    char readBuffer[BUFFER_SIZE] = { 0 };
+    int readBytes = 0;
 
+    char writeBuffer[BUFFER_SIZE] = { 0 };
+    int writeBytes = 0;
+    while (1)
+    {
+        readBytes = read(connfd, readBuffer, BUFFER_SIZE - 1);
+        if (readBytes < 0)
+        {
+            /* 读出错 */
+            perror("read error");
+            break;
+        }
+        else if (readBytes == 0)
+        {
+            /* 这边读到的字节数为0, 说明什么? */
+            printf("客户端下线\n");
+            break;
+        }
+        else
+        {
+            printf("readBytes:%d,\treadBuffer:%s\n", readBytes, readBuffer);
+
+            for (int idx = 0; idx < readBytes; idx++)
+            {
+                /* 转大写 */
+                writeBuffer[idx] = toupper(readBuffer[idx]);
+            }
+
+            /* 写回客户端 */
+            write(connfd, writeBuffer, readBytes);
+        }
+    }
 
     /* 回收资源 */
     close(connfd);
