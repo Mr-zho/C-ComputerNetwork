@@ -5,8 +5,10 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <string.h>
+#include <unistd.h>
 
 #define SERVER_PORT 8080
+#define BUFFER_SIZE 64
 
 int main()
 {
@@ -46,7 +48,51 @@ int main()
 
     printf("hello world");
 
+    char writeBuffer[] = "hello nihao!";
 
+    char readBuffer[BUFFER_SIZE] = { 0 };
+    int readBytes = 0;
+    while (1)
+    {
+        printf("please input:");
+        scanf("%s", writeBuffer);
+        /* 写到服务器 */
+        write(sockfd, writeBuffer, strlen(writeBuffer) + 1);
+
+        sleep(2);
+
+        /* 读取 服务器发回的数据 */
+        readBytes = read(sockfd, readBuffer, BUFFER_SIZE);
+        if (readBytes < 0)
+        {
+
+        }
+        else if (readBytes == 0)
+        {
+
+        }
+        else
+        {
+            printf("buffer:%s\n", readBuffer);
+        }
+    }
+    
+    #if 0
+    char buffer[32] = { 0 };
+    int readBytes = read(sockfd, buffer, sizeof(buffer));
+    if (readBytes < 0)
+    {
+
+    }
+    else if (readBytes == 0)
+    {
+
+    }
+    else
+    {
+        printf("buffer:%s\n", buffer);
+    }
+    #endif
     
     return 0;
 }
