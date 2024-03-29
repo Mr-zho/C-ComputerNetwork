@@ -160,8 +160,6 @@ int main()
                     write(connfd, writeBuffer, readBytes);
                 }
             }
-            
-
         }
 
     }
@@ -184,10 +182,6 @@ int main()
             2. 底层:红黑树
             3.
     */
-
-
-
-
 
     /* accept的返回值是和【客户端通信】的文件描述符 */
     int connfd = accept(sockfd, (struct sockaddr *)&clientAddress, &clientAddressLength);
