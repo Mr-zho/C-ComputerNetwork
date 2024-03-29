@@ -11,6 +11,11 @@
 #define SERVER_PORT 8080
 #define  BUFFER_SIZE 64
 
+enum FUNCTION_OPTION
+{
+    REGIS = 1,
+    LOGIN,
+};
 
 int main()
 {
@@ -95,14 +100,29 @@ int main()
         {
             printf("readBytes:%d,\treadBuffer:%s\n", readBytes, readBuffer);
 
-            for (int idx = 0; idx < readBytes; idx++)
+            /* 需要对readBuffer进行解析 */
+            
+            choice = XXXX("2zhou123456")
+            switch (choice)
             {
-                /* 转大写 */
-                writeBuffer[idx] = toupper(readBuffer[idx]);
-            }
+            case REGIS:
+                /* 改手机号已经被注册了 */
+                /* 注册异常 */
+                /* 注册成功 */
+                write (connfd, "register error", )
+                break;
+            case LOGIN:
+                /* */
+                /* 密码错误 */
+                /* 改用户不存在 */
+                /* 账号被封 */
+                /* 登陆成功 */
+                write (connfd, "login error", )
+                break; 
 
-            /* 写回客户端 */
-            write(connfd, writeBuffer, readBytes);
+            default:
+                break;
+            }
         }
     }
 

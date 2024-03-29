@@ -40,6 +40,32 @@ typedef struct MessageInfo
 } MessageInfo;
 
 
+/* 映射: 全局指针数组做映射todo..., */
+#if 0
+static const char * convertJsonStr(const UserInfo * info, int keyNums, const char *keys[])
+{
+    /* step1: 创建json对象 */
+    struct json_object * object = json_object_new_object();
+    if (object == NULL)
+    {
+        perror("json_object_new_object error");
+        exit(-1);
+    }
+
+    /* 在json对象中添加<key, value> */
+    for (int idx = 0; idx < keyNums; idx++)
+    {
+        json_object_object_add(object, keys[idx], json_object_new_int64(info->type));
+    }
+    json_object_object_add(object, key2, json_object_new_string(info->username));
+    json_object_object_add(object, key3, json_object_new_string(info->passwd));
+
+
+    /* 将json对象转化成字符串 */
+    const char * str = json_object_to_json_string(object);
+    printf("str:%s\n", str);
+}
+#endif
 
 int main()
 {
@@ -91,7 +117,7 @@ int main()
     int writeBytes = 0;
     while (1)
     {
-        #if 0
+        #if 1
         /* 注册功能 */
         printf("please input type:");
         scanf("%d", (int *)&info.type);
@@ -107,7 +133,7 @@ int main()
             perror("write error");
             break;
         }
-        #else
+        #elif 0
         
         /* step1: 创建json对象 */
         struct json_object * object = json_object_new_object();
@@ -136,7 +162,32 @@ int main()
         /* 将json对象转化成字符串 */
         const char * str = json_object_to_json_string(object);
         printf("str:%s\n", str);
+        #else
+        /* 注册功能 */
+        printf("please input type:");
+        scanf("%d", (int *)&info.type);
+        printf("please input name:");
+        scanf("%s", info.username);
+        printf("please input passwd:");
+        scanf("%s", info.passwd);
 
+        
+        /* step1: 创建json对象 */
+        struct json_object * object = json_object_new_object();
+        if (object == NULL)
+        {
+            perror("json_object_new_object error");
+            exit(-1);
+        }
+
+
+        json_object_object_add(object, "type", json_object_new_string(info.type));
+        json_object_object_add(object, "name", json_object_new_string(info.username));
+        json_object_object_add(object, "passwd", json_object_new_string(info.passwd));
+
+        /* 将json对象转化成字符串 */
+        const char * str = json_object_to_json_string(object);
+        printf("str:%s\n", str);
 
         /* 写到服务器 */
         writeBytes = write(sockfd, str, strlen(str) + 1);

@@ -9,6 +9,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <pthread.h>
+#include "threadPool.h"
 
 #define SERVER_PORT 8080
 #define  BUFFER_SIZE 64
@@ -112,6 +113,12 @@ void * thread_conn(void * arg)
 
 int main()
 {
+
+    /* 初始化线程池 */
+    ThreadPool pool; 
+    threadPoolInit(&pool, 3, 10, 50);
+
+
     int sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd == -1)
     {
@@ -174,6 +181,7 @@ int main()
         int clientPort = ntohs(clientAddress.sin_port);
         printf("clientIp:%s,\tclientPort:%d\n", clientIp, clientPort);
 
+#if 0
         /* 开辟线程 */
         pthread_t tid;
         ret = pthread_create(&tid, NULL, thread_conn, (void *)&connfd);
@@ -187,6 +195,13 @@ int main()
                 1.频繁开辟线程和销毁线程是一件非常影响【效率】的事情 
                 2.客户端无节制的涌入, 无法保证【资源】的使用
         */
+#else
+
+        threadPoolAdd(&pool, thread_conn, (void *)&connfd);
+
+#endif
+        /* 休眠1000ms. */
+        usleep(1000);
     }
 
     /* 回收资源 */
